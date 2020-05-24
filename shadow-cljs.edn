@@ -1,0 +1,9 @@
+{:lein         true
+ :source-paths ["src"]
+ :builds       {:app {:target     :browser
+                      :output-dir "resources/public/js"
+                      :asset-path "/js"
+                      :modules    {:app {:entries [blogging-platform.core]}}
+                      :devtools   {:after-load blogging-platform.core/mount-root}}}
+ :dev-http     {3000 {:root    "resources/public"
+                      :handler blogging-platform.handler/app}}}

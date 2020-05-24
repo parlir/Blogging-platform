@@ -1,0 +1,59 @@
+* End User Flow
+** Flow consumption
+*** User logs in to platform
+ OAuth2 client with connections to probably google+ and Facebook
+*** They see there list of blogs that they are following with content ordered by creation date
+One thing to note here is all content should be readily available without a login. A Login should really only be used as a way to produce content for your blog
+Or some additional feature that requires an identity (like specifying blogs I'm interested in). Viewing articles should not require any login.
+Commenting will require a login to prevent abuse.
+  #+BEGIN_SRC sql
+  -- [Use a followings table and join it with blogs]
+  SELECT blog.id from following where user_id = logged_in_user_id JOIN blogs following.blog
+  -- Some sort of pagination will be required
+  SELECT * from posts where blog = (results_of_query_above) ORDER_BY created_at COUNT 10 OFFSET 0
+  #+END_SRC
+*** User search's for content
+// Full text search against probably both Blog title (higher precedence) and post content.
+// For ideal search needs to be context dependent on user (search for who they're following should take precedence.)
+*** Finds article interested in 
+*** Reads article
+*** User comments on article
+*** User enjoys blog and subscribes to rss feed
+
+** Flow producing content
+*** User logs in
+*** User has decided to create a blog
+*** User creates blog is set owner of the blog
+ - User should have ability to add other users to produce content on this blog
+   And set some degree of permissions for users.
+*** User creates a post for their blog
+*** User presented WYSIWYG editor and adds content (includes images and support for linking)
+*** User posts content on behalf of this blog
+*** Blogs audience is alerted to content whether that be through an rss feed or through end web UI presenting a notification.
+
+* Tasks based on above flows
+** TODO Schema
+[user] -> [comment - post_id] -> [post]
+[user] -> [user_blog_table - user_id - blog_id] -> [blog - post_id] -> [post]
+[user] -> [following - blog_id] -> [blog]
+** TODO Screens for above scenarios
+*** TODO General
+**** TODO Login screen [Probably temporarily will support Oauth2 login through google and username/password encrypted jwt auth]
+*** TODO Consumption
+**** TODO Screen showing chronological ordering of posts from blogs a user is subscribed too
+**** TODO Searching for content (external too blogs user is subscribed too)
+**** TODO Article rendering
+**** TODO Comments [Should be on the same screen as an article it relates too but need both a form and a way to display]
+- Should I support threading on comments?
+*** TODO Producing
+**** TODO Editor screen for creating a blog
+**** TODO Editor screen for creating/editing posts [WYSIWYG editor]
+**** TODO Administrator panels related to who has access to creating content on a blog [later will limit now to single user]
+** TODO Alerting mechanism
+*** TODO RSS Feed
+*** TODO Potentially email
+*** TODO Web UI
+** TODO WYSIWYG editor
+*** TODO How this will get modeled on the backend
+- Needs support for assets like images etc... [needs to be on some blob storage like s3]
+*** TODO Determine a component that is flexible and has good UI 
